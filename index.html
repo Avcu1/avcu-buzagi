@@ -128,12 +128,97 @@ footer{text-align:center;color:#87929a;padding:25px 0 5px;font-size:12px;font-we
 <button class="primary green" onclick="confirmMove()">ROBOTA TAŞI</button>
 </div></div></div>
 <script>
-const KEY='avcu_buzagi_takip_final_v1';
-let data=JSON.parse(localStorage.getItem(KEY)||'null')||{calves:[],robots:[],treatments:{},vet:{name:'',phone:''}};
-let selected={type:null,id:null}; let selectedMove=null;
-data.calves.forEach(x=>{if(!x.ydDate&&x.ynDate)x.ydDate=x.ynDate;delete x.ynDate;delete x.bayboxDate});data.robots.forEach(x=>{x.karmaNextDone=x.karmaNextDone||'';x.pastNextDone=x.pastNextDone||'';x.mantarNextDone=x.mantarNextDone||'';x.bayboxDate=x.bayboxDate||''});
+/* ===== AVCU BUZAĞI TAKİP - ONLINE AYAR =====
+   1) SUPABASE_URL ve SUPABASE_ANON_KEY değerlerini doldur.
+   2) Supabase SQL Editor'da aşağıdaki tabloyu bir kez oluştur:
 
-function persist(){localStorage.setItem(KEY,JSON.stringify(data));updateSummary();}
+   create table if not exists public.avcu_app_state (
+     id integer primary key,
+     data jsonb not null,
+     updated_at timestamptz default now()
+   );
+   alter table public.avcu_app_state enable row level security;
+   create policy "avcu_read" on public.avcu_app_state for select to anon using (true);
+   create policy "avcu_insert" on public.avcu_app_state for insert to anon with check (true);
+   create policy "avcu_update" on public.avcu_app_state for update to anon using (true) with check (true);
+
+   Not: Bu sürüm tek ortak çiftlik verisini bütün cihazlarda senkronlar.
+*/
+const SUPABASE_URL='https://anuxloclaxxensuidagd.supabase.co';
+const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFudXhsb2NsYXh4ZW5zdWlkYWdkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgxMjA5MjUsImV4cCI6MjEwMzY5NjkyNX0.VkjxL8-5VD24FYyysTBGkMBboAZrSp6vEyUg7-ocO9A';
+const CLOUD_TABLE='avcu_app_state';
+const CLOUD_ID=1;
+const KEY='avcu_buzagi_takip_final_v1';
+const EMPTY_DATA={calves:[],robots:[],treatments:{},vet:{name:'',phone:''}};
+let data=JSON.parse(localStorage.getItem(KEY)||'null')||structuredClone(EMPTY_DATA);
+let selected={type:null,id:null}; let selectedMove=null;
+let cloudReady=false, cloudTimer=null, cloudSaving=false;
+
+data.calves.forEach(x=>{if(!x.ydDate&&x.ynDate)x.ydDate=x.ynDate;delete x.ynDate;});
+data.robots.forEach(x=>{x.karmaNextDone=x.karmaNextDone||'';x.pastNextDone=x.pastNextDone||'';x.mantarNextDone=x.mantarNextDone||'';x.bayboxDate=x.bayboxDate||''});
+
+function persist(){
+  localStorage.setItem(KEY,JSON.stringify(data));
+  updateSummary();
+  cloudSave();
+}
+async function cloudSave(){
+  if(!isCloudConfigured()||cloudSaving)return;
+  cloudSaving=true;
+  try{
+    await fetch(SUPABASE_URL+'/rest/v1/'+CLOUD_TABLE+'?on_conflict=id',{
+      method:'POST',
+      headers:{
+        'apikey':SUPABASE_ANON_KEY,
+        'Authorization':'Bearer '+SUPABASE_ANON_KEY,
+        'Content-Type':'application/json',
+        'Prefer':'resolution=merge-duplicates,return=minimal'
+      },
+      body:JSON.stringify({id:CLOUD_ID,data:data,updated_at:new Date().toISOString()})
+    });
+    cloudReady=true;
+    showCloudStatus('☁ Online');
+  }catch(e){showCloudStatus('⚠ Senkron bekliyor');}
+  finally{cloudSaving=false;}
+}
+async function cloudLoad(){
+  if(!isCloudConfigured()){showCloudStatus('⚠ Supabase ayarlanmadı');return;}
+  try{
+    const r=await fetch(SUPABASE_URL+'/rest/v1/'+CLOUD_TABLE+'?id=eq.'+CLOUD_ID+'&select=data,updated_at',{
+      headers:{'apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+SUPABASE_ANON_KEY}
+    });
+    if(!r.ok)throw new Error('Supabase '+r.status);
+    const rows=await r.json();
+    if(rows[0]&&rows[0].data){
+      data=rows[0].data;
+      data.calves=data.calves||[];data.robots=data.robots||[];data.treatments=data.treatments||{};data.vet=data.vet||{name:'',phone:''};
+      localStorage.setItem(KEY,JSON.stringify(data));
+      data.calves.forEach(x=>{if(!x.ydDate&&x.ynDate)x.ydDate=x.ynDate;delete x.ynDate;});
+      data.robots.forEach(x=>{x.karmaNextDone=x.karmaNextDone||'';x.pastNextDone=x.pastNextDone||'';x.mantarNextDone=x.mantarNextDone||'';x.bayboxDate=x.bayboxDate||''});
+      updateSummary(); renderCalves(); renderRobots();
+      if(selected.id) openAnimal(selected.type,selected.id);
+    }
+    cloudReady=true;showCloudStatus('☁ Online');
+  }catch(e){showCloudStatus('⚠ Supabase bağlantısı yok');}
+}
+function isCloudConfigured(){
+  return SUPABASE_URL.startsWith('https://') && !SUPABASE_URL.includes('BURAYA_') &&
+         SUPABASE_ANON_KEY.length>20 && !SUPABASE_ANON_KEY.includes('BURAYA_');
+}
+function showCloudStatus(t){
+  let el=$('cloudStatus');
+  if(!el){
+    el=document.createElement('div');el.id='cloudStatus';
+    el.style='position:fixed;right:14px;bottom:14px;z-index:9999;padding:8px 12px;border-radius:999px;background:#fff;box-shadow:0 4px 18px #0002;font:600 12px system-ui;color:#174f2a';
+    document.body.appendChild(el);
+  }
+  el.textContent=t;
+}
+function startCloudSync(){
+  cloudLoad();
+  clearInterval(cloudTimer);
+  cloudTimer=setInterval(cloudLoad,3000);
+}
 function $(id){return document.getElementById(id)}
 function showPage(id){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));$(id).classList.add('active');if(id==='bolme')renderCalves();if(id==='robot')renderRobots();updateSummary();window.scrollTo(0,0)}
 function toggle(id){$(id).classList.toggle('show')}
@@ -185,6 +270,6 @@ function renderTreatments(){let a=data.treatments[selected.type+'_'+selected.id]
 function saveVet(){data.vet={name:$('vetName').value.trim(),phone:$('vetPhone').value.trim()};persist();updateVet()}
 function updateVet(){let p=data.vet.phone||'';if(p){$('callVet').style.display='block';$('callVet').href='tel:'+p.replace(/\s/g,'');$('callVet').textContent='Veterineri Ara • '+p}else $('callVet').style.display='none'}
 function updateSummary(){$('totalCalves').textContent=data.calves.length;$('totalRobots').textContent=data.robots.length;let alerts=0;data.calves.forEach(x=>{if(!x.ydDate&&ageDays(x.dogum)>=0)alerts++;if(!x.nazalDate&&ageDays(x.dogum)>=7)alerts++;if(!x.makroDate&&ageDays(x.dogum)>=3)alerts++});data.robots.forEach(x=>{[['karmaDate','karmaNextDone'],['pastDate','pastNextDone'],['mantarDate','mantarNextDone']].forEach(([d,n])=>{if(x[d]&&!x[n]&&new Date(addDays(x[d],21)+'T00:00:00')<=new Date())alerts++});if(ageDays(x.dogum)>=15&&!x.bayboxDate)alerts++});$('alertsCount').textContent=alerts}
-updateSummary();showPage('home');
+updateSummary();showPage('home');startCloudSync();
 </script>
 </body></html>
