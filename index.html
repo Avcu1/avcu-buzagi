@@ -1,295 +1,349 @@
-<!doctype html>
-<html lang='tr'>
-<head>
-<meta charset='utf-8'>
-<meta name='viewport' content='width=device-width,initial-scale=1,maximum-scale=1'>
-<title>Avcular Çiftliği • Buzağı Takip</title>
-<style>
+<!doctype html><html lang='tr'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1,maximum-scale=1'><title>Avcular Çiftliği • Buzağı Takip</title><style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 :root{--navy:#123f72;--green:#15705a;--bg:#f4f7f8;--text:#17212b;--muted:#77838c;--line:#e1e7ea;--shadow:0 10px 28px rgba(18,63,114,.10)}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,Arial,sans-serif}
-button,input,select,textarea{font:inherit}button{cursor:pointer}.app{max-width:520px;min-height:100vh;margin:auto;background:#fff;position:relative}
+button,input,select,textarea{font:inherit}button{cursor:pointer}.app{max-width:520px;min-height:100vh;margin:auto;background:#fff}
 .hero{padding:22px 20px 28px;color:#fff;background:#123f72;border-radius:0 0 30px 30px}
-.brand{display:flex;align-items:center;gap:13px}
-.brand h1{margin:0;font-size:24px;letter-spacing:-.7px}.brand p{margin:5px 0 0;opacity:.82;font-size:13px}
+.brand{display:flex;align-items:center;gap:13px}.brand img{width:66px;height:66px;object-fit:contain;background:#fff;border-radius:18px;padding:5px}
+.brand h1{margin:0;font-size:27px;letter-spacing:-.7px}.brand p{margin:5px 0 0;opacity:.82;font-size:13px}
 .page{display:none;padding:22px 18px 92px}.page.active{display:block}h2{font-size:24px;margin:2px 0 16px;letter-spacing:-.5px}
-.home-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.home-card{border:1px solid var(--line);background:#fff;border-radius:24px;overflow:hidden;box-shadow:var(--shadow);padding:18px 16px;text-align:left;cursor:pointer}
-.home-card:active{transform:scale(.985)}
-.inside b{font-size:17px;color:var(--navy);display:block}.inside span{display:block;color:var(--muted);font-size:12px;margin-top:4px}
-.summary{margin-top:27px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.stat{background:#f5f7f8;border-radius:18px;padding:15px 5px;text-align:center}.stat strong{display:block;font-size:25px;color:var(--navy)}.stat span{font-size:11px;color:var(--muted)}
+.home-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.home-card{border:1px solid var(--line);background:#fff;border-radius:24px;overflow:hidden;box-shadow:var(--shadow);padding:0;text-align:left}
+.home-card:active{transform:scale(.985)}.home-card img{width:100%;height:155px;object-fit:cover;display:block;background:#f1f4f5}
+.home-card.robot img{object-fit:contain;padding:15px}.inside{padding:15px 16px 18px}.inside b{font-size:19px}.inside span{display:block;color:var(--muted);font-size:12px;margin-top:5px;line-height:1.4}
+.summary{margin-top:27px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.stat{background:#f5f7f8;border-radius:18px;padding:15px 5px;text-align:center}.stat strong{display:block;font-size:25px}.stat span{font-size:11px;color:var(--muted)}
 .topbar{display:flex;gap:9px;margin-bottom:16px}.back{border:0;background:#edf2f4;color:var(--navy);border-radius:12px;padding:11px 13px;font-weight:800}.add{border:0;background:var(--navy);color:#fff;border-radius:12px;padding:11px 14px;font-weight:800;flex:1}.add.green{background:var(--green)}
 .filter{width:100%;padding:13px;border:1px solid var(--line);border-radius:13px;background:#fff;margin-bottom:12px}
 .form{display:none;background:#f6f8f9;border:1px solid var(--line);padding:15px;border-radius:19px;margin-bottom:15px}.form.show{display:block}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:9px}.field{margin-bottom:10px}.field label{display:block;font-size:11px;color:var(--muted);font-weight:800;margin:0 0 5px}
-input,select,textarea{width:100%;border:1px solid #dce3e7;border-radius:11px;padding:12px;background:#fff;outline:none}
+input,select,textarea{width:100%;border:1px solid #dce3e7;border-radius:11px;padding:12px;background:#fff;outline:none}textarea{min-height:80px;resize:vertical}
 .primary{width:100%;border:0;border-radius:12px;background:var(--navy);color:#fff;padding:13px;font-weight:800}.primary.green{background:var(--green)}
 .list{display:grid;gap:12px}.empty{padding:25px 10px;text-align:center;color:var(--muted);background:#f7f9fa;border-radius:17px}
 .animal{border:1px solid var(--line);border-radius:20px;padding:15px;background:#fff;box-shadow:0 7px 22px rgba(0,0,0,.05)}
-.animal-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
-.animal-title{font-weight:800;font-size:17px;color:var(--navy)}.badge{font-size:11px;background:#eef3f6;color:#52616d;border-radius:999px;padding:5px 8px;font-weight:700}
+.animal-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}.animal-head button{border:0;background:#eaf5f0;color:var(--green);border-radius:11px;padding:9px 11px;font-weight:800}
+.animal-title{font-weight:800;font-size:17px}.badge{font-size:10px;background:#eef3f6;color:#52616d;border-radius:999px;padding:5px 8px}
 .details{display:grid;grid-template-columns:1fr 1fr;gap:8px}.detail{background:#f7f9fa;border-radius:12px;padding:9px}.detail small{display:block;color:var(--muted);font-size:10px}.detail b{display:block;margin-top:2px;font-size:13px}
-.actions{display:flex;gap:8px;margin-top:12px}.actions button{flex:1;border:0;border-radius:11px;padding:10px;font-weight:800;font-size:11px}
-.move{background:#eaf5f0;color:var(--green)}.danger{background:#fbeaea;color:#a52a2a}.btn-act{background:#edf2f7;color:var(--navy)}
+.actions{display:flex;gap:8px;margin-top:12px}.actions button{flex:1;border:0;border-radius:11px;padding:10px;font-weight:800}.move{background:#eaf5f0;color:var(--green)}.danger{background:#fbeaea;color:#a52a2a}
 .nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(520px,100%);background:rgba(255,255,255,.97);backdrop-filter:blur(12px);border-top:1px solid var(--line);display:flex;padding:10px 15px;gap:8px;z-index:20}
-.nav button{flex:1;border:0;background:transparent;color:var(--muted);padding:8px 5px;border-radius:12px;font-size:12px;font-weight:800}.nav button.active{background:#edf5f2;color:var(--green)}
+.nav button{flex:1;border:0;background:transparent;color:var(--muted);padding:8px 5px;border-radius:12px;font-size:11px;font-weight:800}.nav button.active{background:#edf5f2;color:var(--green)}
+footer{text-align:center;color:#87929a;padding:25px 0 5px;font-size:12px;font-weight:800;letter-spacing:.4px}
 .modal{display:none;position:fixed;inset:0;background:rgba(12,25,35,.58);z-index:50;padding:18px;align-items:flex-end;justify-content:center}.modal.show{display:flex}
-.sheet{width:min(520px,100%);max-height:85vh;overflow:auto;background:#fff;border-radius:26px 26px 0 0;padding:20px}
-.sheet-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
-.close{border:0;background:#eef2f4;border-radius:50%;width:38px;height:38px;font-size:20px}
-.sync-badge{position:absolute;top:15px;right:15px;font-size:10px;font-weight:800;background:#e6f5ee;color:#147052;padding:4px 8px;border-radius:99px}
+.sheet{width:min(520px,100%);max-height:92vh;overflow:auto;background:#fff;border-radius:26px 26px 0 0;padding:20px}.sheet-head{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.close{border:0;background:#eef2f4;border-radius:50%;width:38px;height:38px;font-size:20px}.notice{background:#fff7dc;border:1px solid #f0df9a;color:#715b00;border-radius:13px;padding:11px;font-size:11px;line-height:1.5;margin:12px 0}
+.treatment{border:1px solid var(--line);border-radius:15px;padding:12px;margin-top:10px;background:#fafbfb}.treatment b{font-size:13px}.treatment small{color:var(--muted)}
+@media(max-width:380px){.home-grid{grid-template-columns:1fr}.grid2,.details{grid-template-columns:1fr}}
+</style>
+<style>
+.filterrow{display:flex;gap:8px}.filter{flex:1}.muted{color:#77838c;font-size:12px}.home-alert{margin-top:14px;padding:13px;border-radius:15px;background:#fff3f3;border:1px solid #f0d2d2;color:#8d2525;font-size:12px;font-weight:700}
+.vaccine{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;border:1px solid var(--line);border-radius:15px;padding:12px;margin-bottom:9px;background:#fafbfb}.vaccine b{display:block;font-size:13px}.vaccine small{display:block;color:var(--muted);font-size:10px;margin-top:3px}.pill{font-size:10px;font-weight:800;border-radius:999px;padding:7px 9px;white-space:nowrap}.pill.ok{background:#e6f5ee;color:#147052}.pill.bad{background:#fdeaea;color:#a82b2b}.pill.wait{background:#fff4d7;color:#806000}.smallbtn{border:0;background:#eaf5f0;color:var(--green);border-radius:10px;padding:8px;font-size:10px;font-weight:800}.call{display:block;margin-top:10px;text-align:center;background:#eaf5f0;color:var(--green);padding:12px;border-radius:12px;font-weight:800;text-decoration:none}.actions button{font-size:12px}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-</head>
-<body>
+</head><body>
 <div class="app">
-<header class="hero">
-  <div id="sync-status" class="sync-badge">🟢 Bulut Bağlı</div>
-  <div class="brand">
-    <div><h1>Avcular Çiftliği</h1><p>Bulut Tabanlı Buzağı Takip</p></div>
-  </div>
-</header>
-
+<header class="hero"><div class="brand"><div><h1>Buzağı Takip</h1><p>Avcular Çiftliği</p></div></div></header>
 <main>
-  <!-- ANA SAYFA -->
-  <section id="home" class="page active">
-    <h2>Bölüm Seç</h2>
-    <div class="home-grid">
-      <div class="home-card" onclick="openSection('bolme')">
-        <div class="inside"><b>🏠 Bireysel Bölmeler</b><span id="cnt-bolme">0 Buzağı</span></div>
-      </div>
-      <div class="home-card" onclick="openSection('kulube')">
-        <div class="inside"><b>🛖 İglo / Kulübeler</b><span id="cnt-kulube">0 Buzağı</span></div>
-      </div>
-      <div class="home-card" onclick="openSection('robot')">
-        <div class="inside"><b>🤖 Buzağı Robotu</b><span id="cnt-robot">0 Buzağı</span></div>
-      </div>
-      <div class="home-card" onclick="openSection('hepsi')">
-        <div class="inside"><b>📋 Tüm Liste</b><span id="cnt-hepsi">0 Buzağı</span></div>
-      </div>
-    </div>
-    <div class="summary">
-      <div class="stats">
-        <div class="stat"><strong id="stat-toplam">0</strong><span>Toplam</span></div>
-        <div class="stat"><strong id="stat-disi" style="color:var(--green)">0</strong><span>Dişi</span></div>
-        <div class="stat"><strong id="stat-erkek" style="color:#a52a2a">0</strong><span>Erkek</span></div>
-      </div>
-    </div>
-  </section>
+<section id="home" class="page active">
+<h2>Bölüm Seç</h2>
+<div class="home-grid">
+<button class="home-card" onclick="showPage('bolme')"><div class="inside"><b>Bireysel Bölmeler</b><span id="home-bolme-count">0 Buzağı</span></div></button>
+<button class="home-card" onclick="showPage('kulube')"><div class="inside"><b>İglo / Kulübeler</b><span id="home-kulube-count">0 Buzağı</span></div></button>
+<button class="home-card robot" onclick="showPage('robot')"><div class="inside"><b>Buzağı Robotu</b><span id="home-robot-count">0 Buzağı</span></div></button>
+<button class="home-card" onclick="showPage('hepsi')"><div class="inside"><b>Tüm Buzağılar</b><span id="home-hepsi-count">0 Buzağı</span></div></button>
+</div>
 
-  <!-- LİSTE SAYFASI -->
-  <section id="list-page" class="page">
-    <div class="topbar">
-      <button class="back" onclick="showPage('home')">←</button>
-      <button class="add green" onclick="toggleForm()">+ Yeni Buzağı Ekle</button>
-    </div>
+<div class="summary">
+<h2>Sürü Özeti</h2>
+<div class="stats">
+<div class="stat"><strong id="sum-total">0</strong><span>Toplam</span></div>
+<div class="stat"><strong id="sum-female">0</strong><span>Dişi</span></div>
+<div class="stat"><strong id="sum-male">0</strong><span>Erkek</span></div>
+</div>
+</div>
+</section>
 
-    <!-- EKLEME FORMU -->
-    <div id="add-form" class="form">
-      <h3 style="margin:0 0 10px 0;font-size:16px;">Yeni Buzağı Kaydı</h3>
-      <div class="grid2">
-        <div class="field"><label>KÜPE NO</label><input id="inp-kupe" placeholder="TR..." required></div>
-        <div class="field"><label>BÖLÜM</label>
-          <select id="inp-grup">
-            <option value="bolme">Bireysel Bölme</option>
-            <option value="kulube">Kulübe / İglo</option>
-            <option value="robot">Buzağı Robotu</option>
-          </select>
-        </div>
-      </div>
-      <div class="grid2">
-        <div class="field"><label>CİNSİYET</label>
-          <select id="inp-cinsiyet">
-            <option value="Dişi">Dişi</option>
-            <option value="Erkek">Erkek</option>
-          </select>
-        </div>
-        <div class="field"><label>DOĞUM TARİHİ</label><input type="date" id="inp-dogum"></div>
-      </div>
-      <div class="grid2">
-        <div class="field"><label>ANNE KÜPE</label><input id="inp-anne" placeholder="TR..."></div>
-        <div class="field"><label>BABA IRKI / NO</label><input id="inp-baba" placeholder="Simental..."></div>
-      </div>
-      <div class="field"><label>DOĞUM KİLOSU (KG)</label><input type="number" id="inp-kilo" placeholder="40"></div>
-      <button class="primary green" onclick="saveBuzagi()">Buluta Kaydet</button>
-    </div>
+<!-- BÖLME SAYFASI -->
+<section id="bolme" class="page">
+<div class="topbar"><button class="back" onclick="showPage('home')">←</button><button class="add" onclick="toggleForm('bolme-form')">+ Yeni Buzağı Ekle</button></div>
+<h2>Bireysel Bölmeler</h2>
+<div id="bolme-form" class="form">
+<div class="grid2">
+<div class="field"><label>KÜPE NO</label><input id="bolme-earring" placeholder="TR..."></div>
+<div class="field"><label>CİNSİYET</label><select id="bolme-gender"><option>Dişi</option><option>Erkek</option></select></div>
+</div>
+<div class="grid2">
+<div class="field"><label>DOĞUM TARİHİ</label><input type="date" id="bolme-birth"></div>
+<div class="field"><label>BÖLME NO</label><input id="bolme-no" placeholder="Örn: 1"></div>
+</div>
+<div class="grid2">
+<div class="field"><label>ANNE KÜPE NO</label><input id="bolme-mother" placeholder="TR..."></div>
+<div class="field"><label>BABA IRKI / NO</label><input id="bolme-sire" placeholder="Simental / TR..."></div>
+</div>
+<div class="field"><label>DOĞUM KİLOSU (KG)</label><input type="number" id="bolme-weight" placeholder="42"></div>
+<button class="primary" onclick="saveCalf('bolme')">Kaydet</button>
+</div>
+<input class="filter" id="bolme-filter" placeholder="Küpe no ile ara..." oninput="renderCalves('bolme')">
+<div class="list" id="bolme-list"></div>
+</section>
 
-    <input id="search-box" class="filter" placeholder="🔍 Küpe No ile ara..." oninput="renderList()">
-    <div id="buzagi-list" class="list"></div>
-  </section>
+<!-- KULÜBE SAYFASI -->
+<section id="kulube" class="page">
+<div class="topbar"><button class="back" onclick="showPage('home')">←</button><button class="add" onclick="toggleForm('kulube-form')">+ Yeni Buzağı Ekle</button></div>
+<h2>İglo / Kulübeler</h2>
+<div id="kulube-form" class="form">
+<div class="grid2">
+<div class="field"><label>KÜPE NO</label><input id="kulube-earring" placeholder="TR..."></div>
+<div class="field"><label>CİNSİYET</label><select id="kulube-gender"><option>Dişi</option><option>Erkek</option></select></div>
+</div>
+<div class="grid2">
+<div class="field"><label>DOĞUM TARİHİ</label><input type="date" id="kulube-birth"></div>
+<div class="field"><label>KULÜBE NO</label><input id="kulube-no" placeholder="Örn: K-3"></div>
+</div>
+<div class="grid2">
+<div class="field"><label>ANNE KÜPE NO</label><input id="kulube-mother" placeholder="TR..."></div>
+<div class="field"><label>BABA IRKI / NO</label><input id="kulube-sire" placeholder="Simental / TR..."></div>
+</div>
+<div class="field"><label>DOĞUM KİLOSU (KG)</label><input type="number" id="kulube-weight" placeholder="42"></div>
+<button class="primary" onclick="saveCalf('kulube')">Kaydet</button>
+</div>
+<input class="filter" id="kulube-filter" placeholder="Küpe no ile ara..." oninput="renderCalves('kulube')">
+<div class="list" id="kulube-list"></div>
+</section>
+
+<!-- ROBOT SAYFASI -->
+<section id="robot" class="page">
+<div class="topbar"><button class="back" onclick="showPage('home')">←</button><button class="add green" onclick="toggleForm('robot-form')">+ Robot Grubuna Ekle</button></div>
+<h2>Buzağı Robotu</h2>
+<div id="robot-form" class="form">
+<div class="grid2">
+<div class="field"><label>KÜPE NO</label><input id="robot-earring" placeholder="TR..."></div>
+<div class="field"><label>CİNSİYET</label><select id="robot-gender"><option>Dişi</option><option>Erkek</option></select></div>
+</div>
+<div class="grid2">
+<div class="field"><label>DOĞUM TARİHİ</label><input type="date" id="robot-birth"></div>
+<div class="field"><label>ROBOT TASMA NO</label><input id="robot-collar" placeholder="Örn: 104"></div>
+</div>
+<div class="grid2">
+<div class="field"><label>GÜNLÜK HEDEF SÜT (L)</label><input type="number" id="robot-target-milk" placeholder="8"></div>
+<div class="field"><label>İÇTİĞİ SÜT (L)</label><input type="number" id="robot-drink-milk" placeholder="7.5"></div>
+</div>
+<div class="grid2">
+<div class="field"><label>ANNE KÜPE NO</label><input id="robot-mother" placeholder="TR..."></div>
+<div class="field"><label>BABA IRKI / NO</label><input id="robot-sire" placeholder="Simental / TR..."></div>
+</div>
+<div class="field"><label>MEVCUT AĞIRLIK (KG)</label><input type="number" id="robot-weight" placeholder="68"></div>
+<button class="primary green" onclick="saveCalf('robot')">Robot Grubuna Kaydet</button>
+</div>
+<input class="filter" id="robot-filter" placeholder="Küpe veya tasma no ile ara..." oninput="renderCalves('robot')">
+<div class="list" id="robot-list"></div>
+</section>
+
+<!-- TÜM BUZAĞILAR -->
+<section id="hepsi" class="page">
+<div class="topbar"><button class="back" onclick="showPage('home')">←</button></div>
+<h2>Tüm Buzağılar</h2>
+<input class="filter" id="hepsi-filter" placeholder="Küpe, grup veya ırk ara..." oninput="renderCalves('hepsi')">
+<div class="list" id="hepsi-list"></div>
+</section>
 </main>
 
-<!-- İŞLEM / SAĞLIK MODAL -->
-<div id="action-modal" class="modal">
-  <div class="sheet">
-    <div class="sheet-head">
-      <h3 id="modal-title" style="margin:0">İşlem Ekle</h3>
-      <button class="close" onclick="closeModal()">✕</button>
-    </div>
-    <div class="field"><label>İŞLEM TÜRÜ</label>
-      <select id="act-type">
-        <option value="Aşı">Aşı Uygulaması</option>
-        <option value="Tedavi">Tedavi / İlaç</option>
-        <option value="Tartım">Kilo Tartımı</option>
-      </select>
-    </div>
-    <div class="field"><label>AÇIKLAMA / İLAÇ / KİLO</label><input id="act-detail" placeholder="Örn: 2ml Rota-Korona veya 65 kg"></div>
-    <button class="primary" onclick="submitAction()">Kaydet</button>
-    <div id="modal-history" style="margin-top:15px;"></div>
-  </div>
+<!-- İŞLEM / SAĞLIK MODALI -->
+<div class="modal" id="treatment-modal">
+<div class="sheet">
+<div class="sheet-head">
+<h3 id="modal-title" style="margin:0">Buzağı İşlemleri</h3>
+<button class="close" onclick="closeModal()">✕</button>
+</div>
+<div class="field"><label>İŞLEM TÜRÜ</label>
+<select id="t-type">
+<option>Aşı</option>
+<option>Tedavi / İlaç</option>
+<option>Tartım</option>
+</select>
+</div>
+<div class="field"><label>AÇIKLAMA / İLAÇ ADI / KİLO</label><input id="t-notes" placeholder="Uygulanan işlem detayı..."></div>
+<button class="primary" onclick="addTreatment()">İşlemi Kaydet</button>
+<div id="treatment-history" style="margin-top:15px;"></div>
+</div>
 </div>
 
 <nav class="nav">
-  <button id="nav-btn-home" class="active" onclick="showPage('home')">🏠 Ana Menü</button>
-  <button id="nav-btn-list" onclick="openSection('hepsi')">📋 Tüm Sürü</button>
+<button class="active" onclick="showPage('home')">🏠 Ana Menü</button>
+<button onclick="showPage('bolme')">Bölmeler</button>
+<button onclick="showPage('kulube')">Kulübeler</button>
+<button onclick="showPage('robot')">Robot</button>
+<button onclick="showPage('hepsi')">Tümü</button>
 </nav>
 </div>
 
 <script>
-// ================= SUPABASE CLIENT =================
+// ================= SUPABASE BAĞLANTISI =================
 const SUPABASE_URL = "https://anuxloclaxxensuidagd.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFudXhsb2NsYXh4ZW5zdWlkYWdkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgxMjA5MjUsImV4cCI6MjEwMzY5NjkyNX0.VkjxL8-5VD24FYyysTBGkMBboAZrSp6vEyUg7-ocO9A";
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-let list = [];
-let currentGroup = 'hepsi';
-let activeCalfId = null;
+let calves = [];
+let currentCalfId = null;
 
-async function startApp() {
-  document.getElementById('inp-dogum').value = new Date().toISOString().split('T')[0];
-  await loadData();
+async function initApp() {
+  const today = new Date().toISOString().split('T')[0];
+  if(document.getElementById('bolme-birth')) document.getElementById('bolme-birth').value = today;
+  if(document.getElementById('kulube-birth')) document.getElementById('kulube-birth').value = today;
+  if(document.getElementById('robot-birth')) document.getElementById('robot-birth').value = today;
+  
+  await loadCalves();
 
-  // Canlı Senkronizasyon (Telefon ↔ PC anında güncellenir)
+  // Canlı senkronizasyon (realtime)
   db.channel('realtime:buzagilar')
     .on('postgres_changes', { event: '*', schema: 'public', table: 'buzagilar' }, () => {
-      loadData();
+      loadCalves();
     })
     .subscribe();
 }
 
-async function loadData() {
+async function loadCalves() {
   const { data, error } = await db.from('buzagilar').select('*').order('created_at', { ascending: false });
   if (!error && data) {
-    list = data;
+    calves = data;
     updateCounts();
-    renderList();
+    ['bolme', 'kulube', 'robot', 'hepsi'].forEach(renderCalves);
   }
 }
 
-async function saveBuzagi() {
-  const kupe = document.getElementById('inp-kupe').value.trim();
-  if (!kupe) return alert('Küpe numarası zorunludur!');
+async function saveCalf(group) {
+  const earring = document.getElementById(`${group}-earring`).value.trim();
+  if (!earring) return alert('Küpe numarası zorunludur!');
 
-  const item = {
-    kupe,
-    grup: document.getElementById('inp-grup').value,
-    cinsiyet: document.getElementById('inp-cinsiyet').value,
-    dogum_tarih: document.getElementById('inp-dogum').value,
-    anne_kupe: document.getElementById('inp-anne').value.trim(),
-    baba_irk: document.getElementById('inp-baba').value.trim(),
-    kilo: parseFloat(document.getElementById('inp-kilo').value) || null,
-    asilar: [],
-    tedaviler: []
+  const gender = document.getElementById(`${group}-gender`).value;
+  const birth = document.getElementById(`${group}-birth`).value;
+  const mother = document.getElementById(`${group}-mother`).value.trim();
+  const sire = document.getElementById(`${group}-sire`).value.trim();
+  const weight = parseFloat(document.getElementById(`${group}-weight`).value) || null;
+
+  let extraData = {};
+  if (group === 'bolme') extraData.no = document.getElementById('bolme-no').value;
+  if (group === 'kulube') extraData.no = document.getElementById('kulube-no').value;
+  if (group === 'robot') {
+    extraData.collar = document.getElementById('robot-collar').value;
+    extraData.targetMilk = document.getElementById('robot-target-milk').value;
+    extraData.drinkMilk = document.getElementById('robot-drink-milk').value;
+  }
+
+  const newCalf = {
+    kupe: earring,
+    grup: group,
+    cinsiyet: gender,
+    dogum_tarih: birth,
+    anne_kupe: mother,
+    baba_irk: sire,
+    kilo: weight,
+    tedaviler: extraData.no || extraData.collar ? [{ tip: 'Detay', detay: JSON.stringify(extraData), tarih: birth }] : [],
+    asilar: []
   };
 
-  const { error } = await db.from('buzagilar').insert([item]);
+  const { error } = await db.from('buzagilar').insert([newCalf]);
   if (error) {
     alert('Kayıt başarısız: ' + error.message);
   } else {
-    document.getElementById('inp-kupe').value = '';
-    document.getElementById('inp-anne').value = '';
-    document.getElementById('inp-baba').value = '';
-    document.getElementById('inp-kilo').value = '';
-    toggleForm(false);
-    loadData();
+    document.getElementById(`${group}-earring`).value = '';
+    document.getElementById(`${group}-mother`).value = '';
+    document.getElementById(`${group}-sire`).value = '';
+    document.getElementById(`${group}-weight`).value = '';
+    toggleForm(`${group}-form`, false);
+    loadCalves();
   }
 }
 
-async function removeCalf(id) {
-  if (confirm('Bu buzağıyı silmek istediğinize emin misiniz?')) {
+async function deleteCalf(id) {
+  if (confirm('Bu buzağı kaydını silmek istediğinize emin misiniz?')) {
     await db.from('buzagilar').delete().eq('id', id);
-    loadData();
+    loadCalves();
   }
 }
 
-async function changeGroup(id, curGrup) {
-  const map = { 'bolme': 'Bölme', 'kulube': 'Kulübe', 'robot': 'Robot' };
-  const target = prompt("Yeni Bölüm Seçin (bolme / kulube / robot):", curGrup);
-  if (target && map[target]) {
+async function moveCalf(id, currentGroup) {
+  const target = prompt("Taşınacak Grubu Seçin (bolme / kulube / robot):", currentGroup);
+  if (target && ['bolme', 'kulube', 'robot'].includes(target)) {
     await db.from('buzagilar').update({ grup: target }).eq('id', id);
-    loadData();
+    loadCalves();
   }
 }
 
-function openActionModal(id) {
-  activeCalfId = id;
-  const c = list.find(x => x.id === id);
+function openTreatmentModal(id) {
+  currentCalfId = id;
+  const c = calves.find(x => x.id === id);
   if (!c) return;
-  document.getElementById('modal-title').innerText = `${c.kupe} • İşlem / Tedavi`;
-  renderHistory(c);
-  document.getElementById('action-modal').classList.add('show');
+  document.getElementById('modal-title').innerText = `${c.kupe} • İşlemler`;
+  renderTreatments(c);
+  document.getElementById('treatment-modal').classList.add('show');
 }
 
-function renderHistory(c) {
-  const box = document.getElementById('modal-history');
+function renderTreatments(c) {
+  const box = document.getElementById('treatment-history');
   const items = [...(c.asilar || []), ...(c.tedaviler || [])];
   if (items.length === 0) {
-    box.innerHTML = "<small style='color:var(--muted)'>Kayıtlı işlem yok.</small>";
+    box.innerHTML = "<small style='color:var(--muted)'>Kayıtlı aşı veya tedavi yok.</small>";
     return;
   }
-  box.innerHTML = "<b>Geçmiş:</b>" + items.map(i => `
-    <div style="background:#f7f9fa;padding:6px 10px;border-radius:8px;margin-top:5px;font-size:12px;">
-      <b>${i.type} (${i.date}):</b> ${i.detail}
-    </div>
-  `).join('');
+  box.innerHTML = items.map(i => {
+    if (i.tip === 'Detay') return '';
+    return `
+      <div class="vaccine">
+        <div><b>${i.tip}</b><small>${i.detay}</small></div>
+        <span class="pill ok">${i.tarih}</span>
+      </div>`;
+  }).join('');
 }
 
-async function submitAction() {
-  const type = document.getElementById('act-type').value;
-  const detail = document.getElementById('act-detail').value.trim();
-  if (!detail) return alert('Lütfen açıklama girin!');
+async function addTreatment() {
+  const tip = document.getElementById('t-type').value;
+  const detay = document.getElementById('t-notes').value.trim();
+  if (!detay) return alert('Açıklama giriniz!');
 
-  const c = list.find(x => x.id === activeCalfId);
+  const c = calves.find(x => x.id === currentCalfId);
   if (!c) return;
 
-  const payload = { type, detail, date: new Date().toLocaleDateString('tr-TR') };
-  let updateObj = {};
+  const entry = { tip, detay, tarih: new Date().toLocaleDateString('tr-TR') };
+  let updateData = {};
 
-  if (type === 'Aşı') updateObj.asilar = [...(c.asilar || []), payload];
-  else updateObj.tedaviler = [...(c.tedaviler || []), payload];
+  if (tip === 'Aşı') updateData.asilar = [...(c.asilar || []), entry];
+  else updateData.tedaviler = [...(c.tedaviler || []), entry];
 
-  await db.from('buzagilar').update(updateObj).eq('id', activeCalfId);
-  document.getElementById('act-detail').value = '';
+  await db.from('buzagilar').update(updateData).eq('id', currentCalfId);
+  document.getElementById('t-notes').value = '';
   closeModal();
-  loadData();
+  loadCalves();
 }
 
 function updateCounts() {
-  document.getElementById('stat-toplam').innerText = list.length;
-  document.getElementById('stat-disi').innerText = list.filter(x => x.cinsiyet === 'Dişi').length;
-  document.getElementById('stat-erkek').innerText = list.filter(x => x.cinsiyet === 'Erkek').length;
-  document.getElementById('cnt-bolme').innerText = list.filter(x => x.grup === 'bolme').length + ' Buzağı';
-  document.getElementById('cnt-kulube').innerText = list.filter(x => x.grup === 'kulube').length + ' Buzağı';
-  document.getElementById('cnt-robot').innerText = list.filter(x => x.grup === 'robot').length + ' Buzağı';
-  document.getElementById('cnt-hepsi').innerText = list.length + ' Buzağı';
+  document.getElementById('sum-total').innerText = calves.length;
+  document.getElementById('sum-female').innerText = calves.filter(c => c.cinsiyet === 'Dişi').length;
+  document.getElementById('sum-male').innerText = calves.filter(c => c.cinsiyet === 'Erkek').length;
+  
+  document.getElementById('home-bolme-count').innerText = calves.filter(c => c.grup === 'bolme').length + ' Buzağı';
+  document.getElementById('home-kulube-count').innerText = calves.filter(c => c.grup === 'kulube').length + ' Buzağı';
+  document.getElementById('home-robot-count').innerText = calves.filter(c => c.grup === 'robot').length + ' Buzağı';
+  document.getElementById('home-hepsi-count').innerText = calves.length + ' Buzağı';
 }
 
-function renderList() {
-  const target = document.getElementById('buzagi-list');
-  const q = document.getElementById('search-box').value.toLowerCase();
-  let res = currentGroup === 'hepsi' ? list : list.filter(x => x.grup === currentGroup);
-  if (q) res = res.filter(x => x.kupe.toLowerCase().includes(q) || (x.anne_kupe && x.anne_kupe.toLowerCase().includes(q)));
+function renderCalves(group) {
+  const container = document.getElementById(`${group}-list`);
+  if (!container) return;
+  const filterInput = document.getElementById(`${group}-filter`);
+  const q = filterInput ? filterInput.value.toLowerCase() : '';
 
-  if (res.length === 0) {
-    target.innerHTML = '<div class="empty">Bu grupta buzağı bulunamadı.</div>';
+  let list = group === 'hepsi' ? calves : calves.filter(c => c.grup === group);
+  if (q) list = list.filter(c => c.kupe.toLowerCase().includes(q) || (c.anne_kupe && c.anne_kupe.toLowerCase().includes(q)));
+
+  if (list.length === 0) {
+    container.innerHTML = '<div class="empty">Bu grupta buzağı bulunamadı.</div>';
     return;
   }
 
-  target.innerHTML = res.map(c => {
+  container.innerHTML = list.map(c => {
     const age = Math.floor((new Date() - new Date(c.dogum_tarih)) / (1000 * 60 * 60 * 24)) || 0;
     return `
       <div class="animal">
         <div class="animal-head">
-          <span class="animal-title">🐮 ${c.kupe}</span>
+          <span class="animal-title">${c.kupe}</span>
           <span class="badge">${c.cinsiyet} • ${age} Günlük</span>
         </div>
         <div class="details">
@@ -299,39 +353,32 @@ function renderList() {
           <div class="detail"><small>Baba Irkı</small><b>${c.baba_irk || '-'}</b></div>
         </div>
         <div class="actions">
-          <button class="move" onclick="openActionModal('${c.id}')">💉 Sağlık / Aşı</button>
-          <button class="btn-act" onclick="changeGroup('${c.id}', '${c.grup}')">🔁 Grup Taşı</button>
-          <button class="danger" onclick="removeCalf('${c.id}')">Sil</button>
+          <button class="move" onclick="openTreatmentModal('${c.id}')">💉 Sağlık</button>
+          <button class="btn-act" onclick="moveCalf('${c.id}', '${c.grup}')">🔁 Grup Değiş</button>
+          <button class="danger" onclick="deleteCalf('${c.id}')">Sil</button>
         </div>
       </div>
     `;
   }).join('');
 }
 
-function showPage(p) {
-  document.querySelectorAll('.page').forEach(x => x.classList.remove('active'));
-  document.getElementById(p === 'home' ? 'home' : 'list-page').classList.add('active');
-  document.getElementById('nav-btn-home').classList.toggle('active', p === 'home');
-  document.getElementById('nav-btn-list').classList.toggle('active', p !== 'home');
+function showPage(pageId) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const target = document.getElementById(pageId);
+  if (target) target.classList.add('active');
+  window.scrollTo(0, 0);
 }
 
-function openSection(grp) {
-  currentGroup = grp;
-  document.getElementById('inp-grup').value = grp === 'hepsi' ? 'bolme' : grp;
-  showPage('list-page');
-  renderList();
-}
-
-function toggleForm(force) {
-  const f = document.getElementById('add-form');
-  f.classList.toggle('show', force);
+function toggleForm(formId, force) {
+  const f = document.getElementById(formId);
+  if (f) f.classList.toggle('show', force);
 }
 
 function closeModal() {
-  document.getElementById('action-modal').classList.remove('show');
+  document.getElementById('treatment-modal').classList.remove('show');
 }
 
-window.addEventListener('DOMContentLoaded', startApp);
+window.addEventListener('DOMContentLoaded', initApp);
 </script>
 </body>
 </html>
