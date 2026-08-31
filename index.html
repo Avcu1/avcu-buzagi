@@ -152,7 +152,7 @@ const KEY='avcu_buzagi_takip_final_v1';
 const EMPTY_DATA={calves:[],robots:[],treatments:{},vet:{name:'',phone:''}};
 let data=JSON.parse(localStorage.getItem(KEY)||'null')||structuredClone(EMPTY_DATA);
 let selected={type:null,id:null}; let selectedMove=null;
-let cloudReady=false, cloudTimer=null, cloudSaving=false;
+let cloudReady=false, cloudTimer=null, cloudSaving=false, cloudLastUpdated='';
 
 data.calves.forEach(x=>{if(!x.ydDate&&x.ynDate)x.ydDate=x.ynDate;delete x.ynDate;});
 data.robots.forEach(x=>{x.karmaNextDone=x.karmaNextDone||'';x.pastNextDone=x.pastNextDone||'';x.mantarNextDone=x.mantarNextDone||'';x.bayboxDate=x.bayboxDate||''});
@@ -166,7 +166,9 @@ async function cloudSave(){
   if(!isCloudConfigured()||cloudSaving)return;
   cloudSaving=true;
   try{
-    await fetch(SUPABASE_URL+'/rest/v1/'+CLOUD_TABLE+'?on_conflict=id',{
+    const stamp=new Date().toISOString();
+    const r=await fetch(SUPABASE_URL+'/rest/v1/'+CLOUD_TABLE+'?on_conflict=id',{
+
       method:'POST',
       headers:{
         'apikey':SUPABASE_ANON_KEY,
@@ -174,8 +176,10 @@ async function cloudSave(){
         'Content-Type':'application/json',
         'Prefer':'resolution=merge-duplicates,return=minimal'
       },
-      body:JSON.stringify({id:CLOUD_ID,data:data,updated_at:new Date().toISOString()})
+      body:JSON.stringify({id:CLOUD_ID,data:data,updated_at:stamp})
     });
+    if(!r.ok) throw new Error('Supabase '+r.status);
+    cloudLastUpdated=stamp;
     cloudReady=true;
     showCloudStatus('☁ Online');
   }catch(e){showCloudStatus('⚠ Senkron bekliyor');}
@@ -190,9 +194,12 @@ async function cloudLoad(){
     if(!r.ok)throw new Error('Supabase '+r.status);
     const rows=await r.json();
     if(rows[0]&&rows[0].data){
+      const remoteStamp=rows[0].updated_at||'';
+      if(remoteStamp && remoteStamp===cloudLastUpdated){ cloudReady=true; showCloudStatus('☁ Online'); return; }
       data=rows[0].data;
       data.calves=data.calves||[];data.robots=data.robots||[];data.treatments=data.treatments||{};data.vet=data.vet||{name:'',phone:''};
       localStorage.setItem(KEY,JSON.stringify(data));
+      cloudLastUpdated=remoteStamp;
       data.calves.forEach(x=>{if(!x.ydDate&&x.ynDate)x.ydDate=x.ynDate;delete x.ynDate;});
       data.robots.forEach(x=>{x.karmaNextDone=x.karmaNextDone||'';x.pastNextDone=x.pastNextDone||'';x.mantarNextDone=x.mantarNextDone||'';x.bayboxDate=x.bayboxDate||''});
       updateSummary(); renderCalves(); renderRobots();
@@ -218,6 +225,8 @@ function startCloudSync(){
   cloudLoad();
   clearInterval(cloudTimer);
   cloudTimer=setInterval(cloudLoad,3000);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)cloudLoad()});
+  window.addEventListener('online',cloudLoad);
 }
 function $(id){return document.getElementById(id)}
 function showPage(id){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));$(id).classList.add('active');if(id==='bolme')renderCalves();if(id==='robot')renderRobots();updateSummary();window.scrollTo(0,0)}
