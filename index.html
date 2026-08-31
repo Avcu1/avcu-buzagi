@@ -174,8 +174,9 @@ footer{text-align:center;color:#87929a;padding:25px 0 5px;font-size:12px;font-we
 </nav>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-// ================= SUPABASE BAĞLANTISI =================
+// ================= SUPABASE CANLI BAĞLANTI =================
 const SUPABASE_URL = "https://anuxloclaxxensuidagd.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFudXhsb2NsYXh4ZW5zdWlkYWdkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgxMjA5MjUsImV4cCI6MjEwMzY5NjkyNX0.VkjxL8-5VD24FYyysTBGkMBboAZrSp6vEyUg7-ocO9A";
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -191,7 +192,6 @@ async function initApp() {
   
   await loadCalves();
 
-  // Canlı senkronizasyon (realtime)
   db.channel('realtime:buzagilar')
     .on('postgres_changes', { event: '*', schema: 'public', table: 'buzagilar' }, () => {
       loadCalves();
@@ -219,12 +219,12 @@ async function saveCalf(group) {
   const weight = parseFloat(document.getElementById(`${group}-weight`).value) || null;
 
   let extraData = {};
-  if (group === 'bolme') extraData.no = document.getElementById('bolme-no').value;
-  if (group === 'kulube') extraData.no = document.getElementById('kulube-no').value;
+  if (group === 'bolme' && document.getElementById('bolme-no')) extraData.no = document.getElementById('bolme-no').value;
+  if (group === 'kulube' && document.getElementById('kulube-no')) extraData.no = document.getElementById('kulube-no').value;
   if (group === 'robot') {
-    extraData.collar = document.getElementById('robot-collar').value;
-    extraData.targetMilk = document.getElementById('robot-target-milk').value;
-    extraData.drinkMilk = document.getElementById('robot-drink-milk').value;
+    if(document.getElementById('robot-collar')) extraData.collar = document.getElementById('robot-collar').value;
+    if(document.getElementById('robot-target-milk')) extraData.targetMilk = document.getElementById('robot-target-milk').value;
+    if(document.getElementById('robot-drink-milk')) extraData.drinkMilk = document.getElementById('robot-drink-milk').value;
   }
 
   const newCalf = {
@@ -235,7 +235,7 @@ async function saveCalf(group) {
     anne_kupe: mother,
     baba_irk: sire,
     kilo: weight,
-    tedaviler: extraData.no || extraData.collar ? [{ tip: 'Detay', detay: JSON.stringify(extraData), tarih: birth }] : [],
+    tedaviler: (extraData.no || extraData.collar) ? [{ tip: 'Detay', detay: JSON.stringify(extraData), tarih: birth }] : [],
     asilar: []
   };
 
@@ -246,7 +246,7 @@ async function saveCalf(group) {
     document.getElementById(`${group}-earring`).value = '';
     document.getElementById(`${group}-mother`).value = '';
     document.getElementById(`${group}-sire`).value = '';
-    document.getElementById(`${group}-weight`).value = '';
+    if(document.getElementById(`${group}-weight`)) document.getElementById(`${group}-weight`).value = '';
     toggleForm(`${group}-form`, false);
     loadCalves();
   }
@@ -271,13 +271,16 @@ function openTreatmentModal(id) {
   currentCalfId = id;
   const c = calves.find(x => x.id === id);
   if (!c) return;
-  document.getElementById('modal-title').innerText = `${c.kupe} • İşlemler`;
+  const titleEl = document.getElementById('modal-title') || document.querySelector('#treatment-modal h3');
+  if(titleEl) titleEl.innerText = `${c.kupe} • İşlemler`;
   renderTreatments(c);
-  document.getElementById('treatment-modal').classList.add('show');
+  const modal = document.getElementById('treatment-modal') || document.querySelector('.modal');
+  if(modal) modal.classList.add('show');
 }
 
 function renderTreatments(c) {
   const box = document.getElementById('treatment-history');
+  if(!box) return;
   const items = [...(c.asilar || []), ...(c.tedaviler || [])];
   if (items.length === 0) {
     box.innerHTML = "<small style='color:var(--muted)'>Kayıtlı aşı veya tedavi yok.</small>";
@@ -294,8 +297,10 @@ function renderTreatments(c) {
 }
 
 async function addTreatment() {
-  const tip = document.getElementById('t-type').value;
-  const detay = document.getElementById('t-notes').value.trim();
+  const tipEl = document.getElementById('t-type');
+  const detEl = document.getElementById('t-notes');
+  const tip = tipEl ? tipEl.value : 'Tedavi';
+  const detay = detEl ? detEl.value.trim() : '';
   if (!detay) return alert('Açıklama giriniz!');
 
   const c = calves.find(x => x.id === currentCalfId);
@@ -308,20 +313,20 @@ async function addTreatment() {
   else updateData.tedaviler = [...(c.tedaviler || []), entry];
 
   await db.from('buzagilar').update(updateData).eq('id', currentCalfId);
-  document.getElementById('t-notes').value = '';
+  if(detEl) detEl.value = '';
   closeModal();
   loadCalves();
 }
 
 function updateCounts() {
-  document.getElementById('sum-total').innerText = calves.length;
-  document.getElementById('sum-female').innerText = calves.filter(c => c.cinsiyet === 'Dişi').length;
-  document.getElementById('sum-male').innerText = calves.filter(c => c.cinsiyet === 'Erkek').length;
+  if(document.getElementById('sum-total')) document.getElementById('sum-total').innerText = calves.length;
+  if(document.getElementById('sum-female')) document.getElementById('sum-female').innerText = calves.filter(c => c.cinsiyet === 'Dişi').length;
+  if(document.getElementById('sum-male')) document.getElementById('sum-male').innerText = calves.filter(c => c.cinsiyet === 'Erkek').length;
   
-  document.getElementById('home-bolme-count').innerText = calves.filter(c => c.grup === 'bolme').length + ' Buzağı';
-  document.getElementById('home-kulube-count').innerText = calves.filter(c => c.grup === 'kulube').length + ' Buzağı';
-  document.getElementById('home-robot-count').innerText = calves.filter(c => c.grup === 'robot').length + ' Buzağı';
-  document.getElementById('home-hepsi-count').innerText = calves.length + ' Buzağı';
+  if(document.getElementById('home-bolme-count')) document.getElementById('home-bolme-count').innerText = calves.filter(c => c.grup === 'bolme').length + ' Buzağı';
+  if(document.getElementById('home-kulube-count')) document.getElementById('home-kulube-count').innerText = calves.filter(c => c.grup === 'kulube').length + ' Buzağı';
+  if(document.getElementById('home-robot-count')) document.getElementById('home-robot-count').innerText = calves.filter(c => c.grup === 'robot').length + ' Buzağı';
+  if(document.getElementById('home-hepsi-count')) document.getElementById('home-hepsi-count').innerText = calves.length + ' Buzağı';
 }
 
 function renderCalves(group) {
@@ -330,21 +335,21 @@ function renderCalves(group) {
   const filterInput = document.getElementById(`${group}-filter`);
   const q = filterInput ? filterInput.value.toLowerCase() : '';
 
-  let list = group === 'hepsi' ? calves : calves.filter(c => c.grup === group);
-  if (q) list = list.filter(c => c.kupe.toLowerCase().includes(q) || (c.anne_kupe && c.anne_kupe.toLowerCase().includes(q)));
+  let filtered = group === 'hepsi' ? calves : calves.filter(c => c.grup === group);
+  if (q) filtered = filtered.filter(c => c.kupe.toLowerCase().includes(q) || (c.anne_kupe && c.anne_kupe.toLowerCase().includes(q)));
 
-  if (list.length === 0) {
+  if (filtered.length === 0) {
     container.innerHTML = '<div class="empty">Bu grupta buzağı bulunamadı.</div>';
     return;
   }
 
-  container.innerHTML = list.map(c => {
+  container.innerHTML = filtered.map(c => {
     const age = Math.floor((new Date() - new Date(c.dogum_tarih)) / (1000 * 60 * 60 * 24)) || 0;
     return `
       <div class="animal">
         <div class="animal-head">
-          <span class="animal-title">${c.kupe}</span>
-          <span class="badge">${c.cinsiyet} • ${age} Günlük</span>
+          <span class="animal-title">🐮 ${c.kupe}</span>
+          <span class="badge" style="color:${c.cinsiyet === 'Dişi' ? 'var(--green)' : '#a52a2a'}">${c.cinsiyet} • ${age} Günlük</span>
         </div>
         <div class="details">
           <div class="detail"><small>Grup</small><b>${c.grup.toUpperCase()}</b></div>
@@ -375,7 +380,8 @@ function toggleForm(formId, force) {
 }
 
 function closeModal() {
-  document.getElementById('treatment-modal').classList.remove('show');
+  const m = document.getElementById('treatment-modal') || document.querySelector('.modal');
+  if(m) m.classList.remove('show');
 }
 
 window.addEventListener('DOMContentLoaded', initApp);
